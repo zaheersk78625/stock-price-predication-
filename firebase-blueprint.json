@@ -1,0 +1,40 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "User preferences and security settings",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "watchlist": { 
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "lastLogin": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email"]
+    },
+    "UserPreference": {
+      "title": "User Preference",
+      "description": "UI and functional settings for the app",
+      "type": "object",
+      "properties": {
+        "theme": { "type": "string", "enum": ["dark", "light"] },
+        "currency": { "type": "string", "enum": ["USD", "INR", "GBP", "EUR"] }
+      },
+      "required": ["theme", "currency"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile document"
+    },
+    "users/{userId}/settings/preferences": {
+      "schema": "UserPreference",
+      "description": "User specific preferences"
+    }
+  }
+}
