@@ -98,13 +98,17 @@ export default function App() {
     try {
       await signInWithGoogle();
     } catch (err: any) {
+      console.error("Auth error details:", err);
       if (err.code === 'auth/popup-closed-by-user') {
-        setAuthError("Login popup was closed before completion. Please try again.");
+        setAuthError("Login window was closed. Please keep it open until sign-in is complete.");
+      } else if (err.code === 'auth/popup-blocked') {
+        setAuthError("Popup blocked by browser. Please allow popups for this site to sign in.");
       } else if (err.code === 'auth/cancelled-by-user') {
-        setAuthError("Login was cancelled.");
+        setAuthError("Sign-in was cancelled.");
+      } else if (err.code === 'auth/network-request-failed') {
+        setAuthError("Network error. Please check your connection and try again.");
       } else {
-        setAuthError("An error occurred during sign-in. Please try again.");
-        console.error("Auth error:", err);
+        setAuthError("System authentication failed. Ensure popups are allowed and try once more.");
       }
     }
   };
@@ -210,19 +214,20 @@ export default function App() {
           >
             {authError && (
               <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-400 text-xs font-bold"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl text-rose-400 text-[11px] font-bold flex items-start gap-3 text-left"
               >
-                {authError}
+                <Info className="w-4 h-4 shrink-0 mt-0.5" />
+                <p>{authError}</p>
               </motion.div>
             )}
             <button 
               onClick={handleLogin}
-              className="w-full bg-white text-black py-4 rounded-2xl font-black tracking-tight flex items-center justify-center gap-3 transition-all hover:bg-emerald-50 active:scale-95 shadow-xl shadow-white/5"
+              className="group w-full bg-white text-black py-4 rounded-2xl font-black tracking-tight flex items-center justify-center gap-3 transition-all hover:bg-emerald-400 hover:scale-[1.02] active:scale-95 shadow-2xl shadow-emerald-500/20"
             >
-              <Globe className="w-5 h-5" />
-              Sign in with Google
+              <Globe className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+              Initialize Terminal Access
             </button>
             <div className="flex items-center gap-4 py-4">
               <div className="h-[1px] flex-1 bg-zinc-800" />
